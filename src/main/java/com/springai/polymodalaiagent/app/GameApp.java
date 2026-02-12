@@ -2,17 +2,16 @@ package com.springai.polymodalaiagent.app;
 
 import com.springai.polymodalaiagent.advisor.MyLoggerAdvisor;
 import com.springai.polymodalaiagent.chatmemory.FileBasedChatMemory;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.AdvisorParams;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
-import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
-import org.springframework.ai.chat.client.advisor.api.Advisor;
+import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.memory.InMemoryChatMemoryRepository;
-import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -30,6 +29,8 @@ public class GameApp {
             "社交型：想找人玩、问联机组队 → 给联机攻略、社交破冰、推荐联机游戏\n" +
             "识别后切入对应提问，引导用户详述需求、设备、过往偏好、卡点，收齐信息后给出具体可执行的专属建议。口语化，带梗，不堆砌术语。";
 
+    @Resource
+    private VectorStore GameAppVectorStore;
 
     public GameApp(ChatModel dashscopeChatModel) {
         // 初始化基于文件对话记忆
@@ -59,7 +60,7 @@ public class GameApp {
                 .call()
                 .chatResponse();
         String content = chatResponse.getResult().getOutput().getText();
-        log.info("content: {}", content);
+//        log.info("content: {}", content);
         return content;
     }
 
@@ -75,7 +76,20 @@ public class GameApp {
                 .call()
                 .entity(GameReport.class);
 //               .entity(new ParameterizedTypeReference<Map<String, Object>>() {}) 自定义Map输出格式
-        log.info("content: {}", chatReportResponse);
+//        log.info("content: {}", chatReportResponse);
         return chatReportResponse;
+    }
+
+    public String doChatWithRag(String message, String chatId) {
+        ChatResponse chatRagResponse = chatClient
+                .prompt()
+                .user(message)
+                .advisors(spec -> spec.param(ChatMemory.CONVERSATION_ID, chatId))
+                .advisors(QuestionAnswerAdvisor.builder(GameAppVectorStore).build())
+                .call()
+                .chatResponse();
+
+//        log.info("content: {}", chatRagResponse);
+        return chatRagResponse.getResult().getOutput().getText();
     }
 }

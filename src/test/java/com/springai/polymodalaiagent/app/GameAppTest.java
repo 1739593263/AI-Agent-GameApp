@@ -34,11 +34,20 @@ class GameAppTest {
     }
 
     @Test
-    void doChatWithReport() {
+    void testChatWithReport() {
         String chatId = UUID.randomUUID().toString();
-        // 第一轮
+
         String message = "你好，我是玩家VA，我想找些休闲的类似RIMWORLD的游戏。请给我一个游戏介绍列表";
         GameApp.GameReport gameReport = gameApp.doChatWithReport(message, chatId);
         Assertions.assertNotNull(gameReport);
+    }
+
+    @Test
+    void testChatWithRag() {
+        String chatId = UUID.randomUUID().toString();
+
+        String message = "你好，我是玩家VA，我想找些休闲的类似RIMWORLD的游戏。请给我一个游戏介绍列表";
+        String answer = gameApp.doChatWithRag(message, chatId);
+        Assertions.assertNotNull(answer);
     }
 }
