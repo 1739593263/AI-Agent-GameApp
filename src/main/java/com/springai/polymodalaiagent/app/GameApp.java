@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.AdvisorParams;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.api.Advisor;
 import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
@@ -31,6 +32,9 @@ public class GameApp {
 
     @Resource
     private VectorStore GameAppVectorStore;
+
+    @Resource
+    private Advisor GameAppRagCloudAdvisor;
 
     public GameApp(ChatModel dashscopeChatModel) {
         // 初始化基于文件对话记忆
@@ -81,14 +85,23 @@ public class GameApp {
     }
 
     public String doChatWithRag(String message, String chatId) {
+        // 本地知识库
+//        ChatResponse chatRagResponse = chatClient
+//                .prompt()
+//                .user(message)
+//                .advisors(spec -> spec.param(ChatMemory.CONVERSATION_ID, chatId))
+//                .advisors(QuestionAnswerAdvisor.builder(GameAppVectorStore).build())
+//                .call()
+//                .chatResponse();
+
+        // Cloud知识库
         ChatResponse chatRagResponse = chatClient
                 .prompt()
                 .user(message)
                 .advisors(spec -> spec.param(ChatMemory.CONVERSATION_ID, chatId))
-                .advisors(QuestionAnswerAdvisor.builder(GameAppVectorStore).build())
+                .advisors(GameAppRagCloudAdvisor)
                 .call()
                 .chatResponse();
-
 //        log.info("content: {}", chatRagResponse);
         return chatRagResponse.getResult().getOutput().getText();
     }
