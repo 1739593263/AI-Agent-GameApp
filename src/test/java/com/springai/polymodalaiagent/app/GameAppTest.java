@@ -45,9 +45,12 @@ class GameAppTest {
     @Test
     void testChatWithRag() {
         String chatId = UUID.randomUUID().toString();
-
-        String message = "你好，我是玩家VA，我想找些休闲的类似RIMWORLD的游戏。请给我一个游戏介绍列表";
+        long beforeTimeMillis = System.currentTimeMillis();
+        String message = "你好，我是玩家VA，我想找一些PC端上的能招募伙伴的战旗类游戏";
         String answer = gameApp.doChatWithRag(message, chatId);
+        long afterTimeMillis = System.currentTimeMillis();
+        long gap = afterTimeMillis - beforeTimeMillis;
+        System.out.println("time spending: "+gap);
         Assertions.assertNotNull(answer);
     }
 }

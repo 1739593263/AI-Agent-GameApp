@@ -27,11 +27,14 @@ public class AppDocumentLoader {
         try {
             Resource[] resources = resourcePatternResolver.getResources("classpath:document/*.md");
             for (Resource resource:resources) {
+                String filename = resource.getFilename();
+                String category = filename.substring(filename.length() - 6, filename.length() - 4);
                 MarkdownDocumentReaderConfig config = MarkdownDocumentReaderConfig.builder()
                         .withHorizontalRuleCreateDocument(true)
                         .withIncludeCodeBlock(false)
                         .withIncludeBlockquote(false)
-                        .withAdditionalMetadata("filename", resource.getFilename())
+                        .withAdditionalMetadata("filename", filename)
+                        .withAdditionalMetadata("category", category)
                         .build();
 
                 MarkdownDocumentReader reader = new MarkdownDocumentReader(resource, config);
