@@ -48,7 +48,7 @@
         <dependency>
             <groupId>com.alibaba.cloud.ai</groupId>
             <artifactId>spring-ai-alibaba-extensions-bom</artifactId>
-            <version>1.1.2.1</version>
+            <version>1.1.2.0</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -71,13 +71,15 @@
             <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
             <version>4.4.0</version>
         </dependency>
+
         <!-- 通义百炼sdk调用包 dashscope -->
         <!-- https://bailian.console.aliyun.com/cn-beijing/?tab=doc#/doc/?type=model&url=2840915 -->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>dashscope-sdk-java</artifactId>
             <!-- 请将 'the-latest-version' 替换为最新版本号：https://mvnrepository.com/artifact/com.alibaba/dashscope-sdk-java -->
-            <version>2.22.9</version>
+<!--            <version>2.22.9</version>-->
+            <version>2.19.1</version>
         </dependency>
 
         <!-- Spring AI Alibaba Agent Framework -->
@@ -109,15 +111,39 @@
             <artifactId>kryo</artifactId>
             <version>5.6.2</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-markdown-document-reader</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-advisors-vector-store</artifactId>
+        </dependency>
+        <!-- 自动整合PG VectorStore的1个包 -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-vector-store-pgvector</artifactId>
+            <version>1.0.0-M7</version>
+        </dependency>
+        <!-- 手动整合PG VectorStore的3个包 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-pgvector-store</artifactId>
+            <version>1.0.0-M6</version>
+        </dependency>
+        <!-- RetrievalAugmentationAdvisor -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-rag</artifactId>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
