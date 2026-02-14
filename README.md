@@ -3,3 +3,12 @@
 ##技术栈
 * Spring AI
 * 通义大模型
+* PgVectorStore
+
+
+## QuickStart
+
+## VectorStore
+![img.png](imgs/PgVectorStoreDB.png)
+
+

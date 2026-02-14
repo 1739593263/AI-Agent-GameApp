@@ -1,17 +1,25 @@
 package com.springai.polymodalaiagent.app;
 
+import cn.hutool.core.lang.tree.TreeBuilder;
 import com.springai.polymodalaiagent.advisor.MyLoggerAdvisor;
 import com.springai.polymodalaiagent.chatmemory.FileBasedChatMemory;
+import com.springai.polymodalaiagent.rag.AppRagCustomAdvisorFactory;
+import com.springai.polymodalaiagent.rag.QueryRewriter;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.AdvisorParams;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.client.advisor.api.Advisor;
-import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
+import org.springframework.ai.rag.generation.augmentation.ContextualQueryAugmenter;
+import org.springframework.ai.rag.preretrieval.query.transformation.RewriteQueryTransformer;
+import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
+import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Component;
 
@@ -33,8 +41,14 @@ public class GameApp {
     @Resource
     private VectorStore GameAppVectorStore;
 
+//    @Resource
+//    private VectorStore PgVectorStore;
+
     @Resource
     private Advisor GameAppRagCloudAdvisor;
+
+    @Resource
+    private QueryRewriter queryRewriter;
 
     public GameApp(ChatModel dashscopeChatModel) {
         // 初始化基于文件对话记忆
@@ -85,24 +99,27 @@ public class GameApp {
     }
 
     public String doChatWithRag(String message, String chatId) {
-        // 本地知识库
-//        ChatResponse chatRagResponse = chatClient
-//                .prompt()
-//                .user(message)
-//                .advisors(spec -> spec.param(ChatMemory.CONVERSATION_ID, chatId))
-//                .advisors(QuestionAnswerAdvisor.builder(GameAppVectorStore).build())
-//                .call()
-//                .chatResponse();
+        String transformedMessage = queryRewriter.rewrite(message);
 
-        // Cloud知识库
         ChatResponse chatRagResponse = chatClient
                 .prompt()
-                .user(message)
+                .user(transformedMessage)
                 .advisors(spec -> spec.param(ChatMemory.CONVERSATION_ID, chatId))
-                .advisors(GameAppRagCloudAdvisor)
+//                .advisors(QuestionAnswerAdvisor.builder(GameAppVectorStore)
+//                        .searchRequest(SearchRequest.builder().similarityThreshold(0.8).topK(5).build())
+//                        .build()) // rag基于本地知识库 耗时 23343ms
+//                .advisors(GameAppRagCloudAdvisor) // rag 基于 Cloud知识库 耗时 39353ms
+//                .advisors(QuestionAnswerAdvisor.builder(PgVectorStore)
+//                        .searchRequest(SearchRequest.builder().similarityThreshold(0.8).topK(5).build())
+//                        .build()) // rag基于PgVector数据库 耗时 10630ms
+                .advisors(AppRagCustomAdvisorFactory.createAppCustomAdvisor(
+                        GameAppVectorStore, "神人"
+                )) // rag 基于 自定义RetrievalArgumentAdvisor（查询增强服务）
                 .call()
                 .chatResponse();
-//        log.info("content: {}", chatRagResponse);
+
+        log.info("content: {}", chatRagResponse);
         return chatRagResponse.getResult().getOutput().getText();
     }
+
 }
