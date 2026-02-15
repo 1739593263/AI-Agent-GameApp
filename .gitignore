@@ -1,6 +1,5 @@
 # CUSTOM
 **/src/main/resources/application-local.yml
-**/src/main/resources/document/
 /tmp/
 
 HELP.md

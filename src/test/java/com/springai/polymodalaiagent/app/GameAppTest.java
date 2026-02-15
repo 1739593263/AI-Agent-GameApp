@@ -53,4 +53,19 @@ class GameAppTest {
         System.out.println("time spending: "+gap);
         Assertions.assertNotNull(answer);
     }
+
+    @Test
+    void testChatWithTools() {
+        String message1 = "查找并下载一张战略类游戏的图片";
+        String chatId = UUID.randomUUID().toString();
+        String gameRes1 = gameApp.doChatWithTools(message1, chatId);
+        System.out.println("output: "+gameRes1);
+        Assertions.assertNotNull(gameRes1);
+
+
+        String message2 = "请搜索该游戏的相关介绍和攻略，并打印出pdf文件";
+        String gameRes2 = gameApp.doChatWithTools(message2, chatId);
+        System.out.println("output: "+gameRes2);
+        Assertions.assertNotNull(gameRes2);
+    }
 }
