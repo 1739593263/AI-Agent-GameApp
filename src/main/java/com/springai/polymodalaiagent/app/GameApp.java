@@ -15,10 +15,12 @@ import org.springframework.ai.chat.client.advisor.api.Advisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.model.tool.ToolCallingManager;
 import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
 import org.springframework.ai.rag.generation.augmentation.ContextualQueryAugmenter;
 import org.springframework.ai.rag.preretrieval.query.transformation.RewriteQueryTransformer;
 import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
+import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Component;
@@ -30,7 +32,7 @@ import java.util.List;
 public class GameApp {
     private final ChatClient chatClient;
 
-    private static final String SYSTEM_PROMPT = "扮演玩过各种游戏的硬核玩家。开场向用户表明身份，告知用户可查找游戏攻略和咨询相关游戏。\n"  +
+    private static final String SYSTEM_PROMPT = "扮演玩过各种游戏的全能玩家。开场向用户表明身份，告知用户可查找游戏攻略和咨询相关游戏。\n"  +
             "根据对话识别玩家类型：\n" +
             "硬核型：追求成就、机制、效率 → 直接上深度攻略、数值、逃课邪道\n" +
             "休闲型：怕难、怕复杂、为放松 → 给轮椅流派、逃课方案、降低门槛\n" +
@@ -49,6 +51,9 @@ public class GameApp {
 
     @Resource
     private QueryRewriter queryRewriter;
+
+    @Resource
+    private ToolCallback[] allTools;
 
     public GameApp(ChatModel dashscopeChatModel) {
         // 初始化基于文件对话记忆
@@ -113,13 +118,26 @@ public class GameApp {
 //                        .searchRequest(SearchRequest.builder().similarityThreshold(0.8).topK(5).build())
 //                        .build()) // rag基于PgVector数据库 耗时 10630ms
                 .advisors(AppRagCustomAdvisorFactory.createAppCustomAdvisor(
-                        GameAppVectorStore, "神人"
+                        GameAppVectorStore, "休闲"
                 )) // rag 基于 自定义RetrievalArgumentAdvisor（查询增强服务）
                 .call()
                 .chatResponse();
 
         log.info("content: {}", chatRagResponse);
         return chatRagResponse.getResult().getOutput().getText();
+    }
+
+    public String doChatWithTools(String message, String chatId) {
+        ChatResponse chatResponse = chatClient
+                .prompt()
+                .user(message)
+                .advisors(spec -> spec.param(ChatMemory.CONVERSATION_ID, chatId))
+                .toolCallbacks(allTools)
+                .call()
+                .chatResponse();
+
+//        log.info("content: {}", chatReportResponse);
+        return chatResponse.getResult().getOutput().getText();
     }
 
 }

@@ -9,6 +9,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * using a generative AI model to extract keywords from document content and add them as metadata
+ */
 @Component
 class MyKeywordEnricher {
 
