@@ -21,10 +21,12 @@ import org.springframework.ai.rag.generation.augmentation.ContextualQueryAugment
 import org.springframework.ai.rag.preretrieval.query.transformation.RewriteQueryTransformer;
 import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
 import org.springframework.ai.tool.ToolCallback;
+import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -54,6 +56,9 @@ public class GameApp {
 
     @Resource
     private ToolCallback[] allTools;
+
+    @Resource
+    private ToolCallbackProvider toolCallbackProvider;
 
     public GameApp(ChatModel dashscopeChatModel) {
         // 初始化基于文件对话记忆
@@ -140,4 +145,21 @@ public class GameApp {
         return chatResponse.getResult().getOutput().getText();
     }
 
+
+    public String doChatWithMCPTools(String message, String chatId) {
+        ToolCallback[] callbacks = toolCallbackProvider.getToolCallbacks();
+        System.out.println(callbacks.length);
+        log.info("Available MCP tools: {}", Arrays.stream(callbacks).toString());
+        ChatResponse chatResponse = chatClient
+                .prompt()
+                .user(message)
+                .advisors(spec -> spec.param(ChatMemory.CONVERSATION_ID, chatId))
+                .toolCallbacks(toolCallbackProvider)
+                .toolCallbacks(allTools) // 配合Tools使用
+                .call()
+                .chatResponse();
+
+//        log.info("content: {}", chatReportResponse);
+        return chatResponse.getResult().getOutput().getText();
+    }
 }

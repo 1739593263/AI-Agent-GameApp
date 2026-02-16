@@ -40,4 +40,17 @@ Spring AI 中 Tools类用于帮助AI大模型更好的生成合理的答案。�
 6. 完成Response输出。
 
 
+## MCP
+本质和Tool一样，不同的点是MCP提供的Tool是外部写好的，后端需要做的是扮演一个MCPClient去申请调用MCPServer中的Tools。
+而MCP则是维护这种Client和Server沟通连接一致性的协议，保证Server提供的接口能够被各种大模型调用。
+![MCP connection.png](imgs/MCPconnection.png)
+
+* MCP网络结构
+  * Client/Server: 管理Client和Server端各自的协议。
+  * Session：用于创建以及维护会话连接用于沟通
+  * Transport：序列以及反序列化JSON-RPC信息，支撑Stdio，SSE，等传输实现。
+    * Studio：用于Server和Client在一个主机端口下的交流传输（本地调用）。
+    * SSE：用于Server和Client在不同服务器的情况下的交流传输（远程调用）。
+
+
 

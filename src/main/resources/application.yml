@@ -3,6 +3,29 @@ spring:
     name: PolyModal-ai-agent
   profiles:
     active: local
+#  datasource:
+#    url: jdbc:postgresql://address:5432/db
+#    username: XXX
+#    password: XXX
+#    ai:
+#      vectorstore:
+#        pgvector:
+#          index-type: HNSW
+#          distance-type: COSINE_DISTANCE
+#          dimensions: 1024
+#          max-document-batch-size: 10000 # Optional: Maximum number of documents per batch
+#      dashscope:
+#        api-key: "XXX"
+#        chat:
+#          options:
+#            model: qwen-max
+#      mcp:
+#        client:
+#          enabled: true
+#          type: sync
+#          sse:
+#          stdio:
+
 server:
   port: 8023
   servlet:
