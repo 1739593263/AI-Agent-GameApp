@@ -72,7 +72,7 @@ class GameAppTest {
     @Test
     void doChatWithMCPTools() {
 //        String message = "searching the best rpg games for PC in 2025 based on GameBrain API";
-        String message = "请下载一些最近的爆款游戏图片";
+        String message = "Please download some pictures of hot video games in this year";
         String chatId = UUID.randomUUID().toString();
         String gameRes1 = gameApp.doChatWithMCPTools(message, chatId);
         Assertions.assertNotNull(gameRes1);
