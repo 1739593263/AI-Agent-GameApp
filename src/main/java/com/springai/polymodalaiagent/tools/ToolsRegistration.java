@@ -14,12 +14,14 @@ public class ToolsRegistration {
         PDFGenerationTool pdfGenerationTool = new PDFGenerationTool();
         ResourceDownloadTool resourceDownloadTool = new ResourceDownloadTool();
         WebScrapingTool webScrapingTool = new WebScrapingTool();
+        TerminateTool terminateTool = new TerminateTool();
 
         ToolCallback[] customerTools = ToolCallbacks.from(
                 fileIOTool,
                 pdfGenerationTool,
                 resourceDownloadTool,
-                webScrapingTool
+                webScrapingTool,
+                terminateTool
         );
         return customerTools;
     }
