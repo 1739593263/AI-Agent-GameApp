@@ -57,7 +57,7 @@ public class ToolCallAgent extends ReActAgent {
 
         // 2. 调用AI大模型，获取其结果
         List<Message> messageList = getMessageList();
-        Prompt prompt = new Prompt(messageList, this.chatOptions);
+        Prompt prompt = new Prompt(messageList, this.chatOptions); // 将以往的QA上下文以及原本的Prompt一起封装入当前的prompt中
         try {
             ChatResponse chatResponse = getChatClient().prompt(prompt)
                     .system(getSystemPrompt())

@@ -27,7 +27,7 @@ public class WManus extends ToolCallAgent{
                 If you want to stop the interaction at any point, use the `terminate` tool/function call.
                 """;
         this.setNextStepPrompt(NEXT_STEP_PROMPT);
-        this.setMaxSteps(5); // 最多调用5次工具来完成回答
+        this.setMaxSteps(3); // 最多调用n次工具来完成回答
         // 注意此处不要直接注入Tools，因为ToolCallAgent用toolCallingManager手动检索并执行了Tool工具，如果此处注入，chatClient会自己自动执行一般工具调用
         ChatClient chatClient = ChatClient.builder(dashScopeChatModel)
                 .defaultAdvisors(new MyLoggerAdvisor())

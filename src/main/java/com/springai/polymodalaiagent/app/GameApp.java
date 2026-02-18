@@ -27,6 +27,7 @@ import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 
 import java.util.Arrays;
 import java.util.List;
@@ -94,6 +95,18 @@ public class GameApp {
         return content;
     }
 
+    public Flux<String> doChatWithStream(String message, String chatId) {
+        Flux<String> flux = chatClient
+                .prompt()
+                .user(message)
+                .advisors(spec -> spec.param(ChatMemory.CONVERSATION_ID, chatId))
+                .stream()
+                .content();
+
+//        log.info("content: {}", content);
+        return flux;
+    }
+
     // record快速生成类
     record GameReport(String title, List<String> output) {}
 
@@ -120,13 +133,13 @@ public class GameApp {
 //                .advisors(QuestionAnswerAdvisor.builder(GameAppVectorStore)
 //                        .searchRequest(SearchRequest.builder().similarityThreshold(0.8).topK(5).build())
 //                        .build()) // rag基于本地知识库 耗时 23343ms
-//                .advisors(GameAppRagCloudAdvisor) // rag 基于 Cloud知识库 耗时 39353ms
+                .advisors(GameAppRagCloudAdvisor) // rag 基于 Cloud知识库 耗时 39353ms
 //                .advisors(QuestionAnswerAdvisor.builder(PgVectorStore)
 //                        .searchRequest(SearchRequest.builder().similarityThreshold(0.8).topK(5).build())
 //                        .build()) // rag基于PgVector数据库 耗时 10630ms
-                .advisors(AppRagCustomAdvisorFactory.createAppCustomAdvisor(
-                        GameAppVectorStore, "休闲"
-                )) // rag 基于 自定义RetrievalArgumentAdvisor（查询增强服务）
+//                .advisors(AppRagCustomAdvisorFactory.createAppCustomAdvisor(
+//                        GameAppVectorStore, "休闲"
+//                )) // rag 基于 自定义RetrievalArgumentAdvisor（查询增强服务）
                 .call()
                 .chatResponse();
 
