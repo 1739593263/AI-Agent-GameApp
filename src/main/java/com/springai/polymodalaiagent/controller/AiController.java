@@ -65,7 +65,7 @@ public class AiController {
     }
 
     @GetMapping(value = "/game_app/wmanus/sseemitter")
-    public SseEmitter doChatWithWManusStream(String query) {
+    public SseEmitter doChatWithWManus(String query) {
         WManus manus = new WManus(toolCallbacks, dashscopeModel);
         return manus.runWithStream(query);
     }
