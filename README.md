@@ -3,10 +3,11 @@
 ##技术栈
 * Spring AI
 * 通义大模型
-* PgVectorStore
+* Rag
+* PgVectorStore数据库
+* MCP外部工具调用
+* OpenManus 智能体
 
-
-## QuickStart
 
 ## Rag库
 将Query和Rag库内容转化成VectorStore数据用于计算相似度并排序。在调用大模型时，
