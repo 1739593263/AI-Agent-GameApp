@@ -1,6 +1,6 @@
 # 游戏咨询AI智能体
 
-##技术栈
+## 技术栈
 * Spring AI
 * 通义大模型
 * Rag
@@ -8,6 +8,19 @@
 * MCP外部工具调用
 * OpenManus 智能体
 
+
+## QuickStart
+* 通过以下代码将本项目部署到本地
+```bash
+git clone https://github.com/1739593263/AI-Agent-GameApp.git
+```
+* 运行 src/main/java/com/springai/polymodalaiagent/PolyModalAiAgentApplication.java 文件以启动后端。
+* 进入 agent-ai-frontend，安装npm并运行项目。
+```bash
+ npm install
+ 
+ npm run dev
+```
 
 ## Rag库
 将Query和Rag库内容转化成VectorStore数据用于计算相似度并排序。在调用大模型时，
@@ -52,6 +65,11 @@ Spring AI 中 Tools类用于帮助AI大模型更好的生成合理的答案。�
   * Transport：序列以及反序列化JSON-RPC信息，支撑Stdio，SSE，等传输实现。
     * Studio：用于Server和Client在一个主机端口下的交流传输（本地调用）。
     * SSE：用于Server和Client在不同服务器的情况下的交流传输（远程调用）。
+
+
+## 网页演示
+![homePage](imgs/home.png)
+![QAPage](imgs/qa.png)
 
 
 
