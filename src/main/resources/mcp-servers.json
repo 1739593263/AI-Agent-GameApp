@@ -10,6 +10,14 @@
         "agent-mcp-server/target/agent-mcp-server-0.0.1-SNAPSHOT.jar"
       ],
       "env": {}
+    },
+    "gamebrain": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://api.gamebrain.co/v1/mcp?api-key=YOUR_KEY"
+      ]
     }
   }
 }
